@@ -1,39 +1,46 @@
-# 🦖 WEBCAM DINO GAME — AI HAND CONTROLLED  
-> Reimagining Chrome’s Dino using Computer Vision & AI
+<h1 align="center">
+  🦖 WEBCAM DINO GAME 🤖
+</h1>
 
 <p align="center">
-  <img src="https://readme-typing-svg.demolab.com?font=JetBrains+Mono&size=30&pause=1200&color=00F5D4&center=true&vCenter=true&width=900&lines=AI+Powered+Webcam+Dino+Game;Control+the+Dino+With+Your+Hand+👋;Real-Time+Computer+Vision+⚡;Built+With+Pure+JavaScript+%2B+TensorFlow.js" />
+  <b>AI-Powered Hand Controlled Dinosaur Game</b>
 </p>
 
 <p align="center">
-  <img src="https://img.shields.io/github/stars/YOUR-USERNAME/webcam-dino-game?style=for-the-badge&color=00F5D4">
-  <img src="https://img.shields.io/github/forks/YOUR-USERNAME/webcam-dino-game?style=for-the-badge&color=FFD166">
-  <img src="https://img.shields.io/github/issues/YOUR-USERNAME/webcam-dino-game?style=for-the-badge&color=EF476F">
-  <img src="https://img.shields.io/github/license/YOUR-USERNAME/webcam-dino-game?style=for-the-badge&color=118AB2">
-</p>
-
-<p align="center">
-  <a href="https://YOUR-USERNAME.github.io/webcam-dino-game/">
-    <img src="https://img.shields.io/badge/🚀_LIVE_DEMO-00F5D4?style=for-the-badge&logo=google-chrome&logoColor=black">
+  <a href="https://your-username.github.io/webcam-dino-game/">
+    <img src="https://img.shields.io/badge/LIVE-DEMO-4dff91?style=for-the-badge&logo=google-chrome" alt="Live Demo">
+  </a>
+  <a href="https://github.com/your-username/webcam-dino-game/stargazers">
+    <img src="https://img.shields.io/github/stars/your-username/webcam-dino-game?style=for-the-badge&logo=github" alt="Stars">
+  </a>
+  <a href="https://github.com/your-username/webcam-dino-game/issues">
+    <img src="https://img.shields.io/badge/REPORT-ISSUES-red?style=for-the-badge&logo=github" alt="Issues">
+  </a>
+  <a href="https://github.com/your-username/webcam-dino-game/blob/main/LICENSE">
+    <img src="https://img.shields.io/badge/LICENSE-MIT-blue?style=for-the-badge" alt="License">
   </a>
 </p>
 
 ---
 
-## 🌌 About The Project
+## 📌 QUICK START
 
-**Webcam Dino Game** is an AI-powered version of the Chrome Dino game where  
-you control the dinosaur using **hand gestures via webcam** — no keyboard required.
+### 🚀 Live Demo
+**[Click here to play now](https://your-username.github.io/webcam-dino-game/)**
 
-This project combines **Computer Vision, AI, and real-time game physics**  
-to create a fun and modern web-based experience.
+### 📥 Local Setup
+```bash
+# 1. Clone repository
+git clone https://github.com/your-username/webcam-dino-game.git
 
----
+# 2. Navigate to folder
+cd webcam-dino-game
 
-## 🧠 How It Works
+# 3. Run with Python
+python -m http.server 5500
 
-
-- ⬆ Move hand up → Dino jumps  
+# 4. Open browser
+# Go to: http://localhost:5500
 - ⬇ Move hand down → Dino ducks  
 - ⌨ Keyboard fallback supported  
 
@@ -52,30 +59,3 @@ to create a fun and modern web-based experience.
 
 ---
 
-## 🎮 Gameplay Preview
-
-<p align="center">
-  <img src="assets/banner.gif" width="800" alt="Gameplay Preview">
-</p>
-
-> Replace `assets/banner.gif` with your gameplay GIF
-
----
-
-## 🕹️ Controls
-
-| Action | Gesture |
-|------|--------|
-| Start Game | Allow Camera |
-| Jump | Hand Up |
-| Duck | Hand Down |
-| Backup | Keyboard |
-
----
-
-## 🚀 Run Locally
-
-```bash
-git clone https://github.com/YOUR-USERNAME/webcam-dino-game.git
-cd webcam-dino-game
-python -m http.server 8000
