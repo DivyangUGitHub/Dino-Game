@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Webcam Dino Game</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    
+    <!-- TensorFlow.js for REAL hand detection -->
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@3.11.0/dist/tf.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/handpose@0.0.7/dist/handpose.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-dinosaur"></i> Webcam Dino Game</h1>
+            <p class="subtitle">Control the dinosaur with your HAND movements!</p>
+            <p class="subtitle-small"><i class="fas fa-hand-point-up"></i> Move your hand UP to JUMP, DOWN to DUCK</p>
+        </header>
+
+        <div class="game-area">
+            <div class="left-panel">
+                <div class="camera-container">
+                    <div class="camera-frame">
+                        <video id="webcam" autoplay playsinline></video>
+                        <canvas id="overlay"></canvas>
+                        <div class="camera-label">
+                            <i class="fas fa-hand-paper"></i> Hand Detection
+                        </div>
+                    </div>
+                    <div class="camera-controls">
+                        <button id="startCamera" class="btn btn-primary">
+                            <i class="fas fa-play"></i> Start Camera
+                        </button>
+                        <button id="calibrate" class="btn btn-secondary" disabled>
+                            <i class="fas fa-sliders-h"></i> Calibrate
+                        </button>
+                    </div>
+                    <div class="camera-hint">
+                        <i class="fas fa-lightbulb"></i> Tip: Show your hand clearly with good lighting
+                    </div>
+                </div>
+
+                <div class="instructions">
+                    <h3><i class="fas fa-info-circle"></i> How to Play</h3>
+                    <ul>
+                        <li><span class="instruction-step">1</span> Allow camera access when prompted</li>
+                        <li><span class="instruction-step">2</span> Show your HAND (not full body) to the camera</li>
+                        <li><span class="instruction-step">3</span> <strong>Move hand UP</strong> to make the dinosaur jump</li>
+                        <li><span class="instruction-step">4</span> <strong>Move hand DOWN</strong> to make the dinosaur duck</li>
+                        <li><span class="instruction-step">5</span> Keep hand in middle for running position</li>
+                        <li><span class="instruction-step">6</span> Avoid obstacles and survive as long as possible!</li>
+                    </ul>
+                    <div class="pose-indicator">
+                        <div class="pose-status" id="poseStatus">
+                            Waiting for camera...
+                        </div>
+                        <div class="pose-icons">
+                            <div class="pose-icon" id="jumpIcon">
+                                <i class="fas fa-hand-point-up"></i>
+                                <span>Hand UP</span>
+                            </div>
+                            <div class="pose-icon" id="duckIcon">
+                                <i class="fas fa-hand-point-down"></i>
+                                <span>Hand DOWN</span>
+                            </div>
+                            <div class="pose-icon" id="runIcon">
+                                <i class="fas fa-hand-rock"></i>
+                                <span>Neutral</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="keyboard-controls">
+                        <h4><i class="fas fa-keyboard"></i> Keyboard Controls (Backup)</h4>
+                        <div class="keyboard-keys">
+                            <div class="key">
+                                <kbd>SPACE</kbd> or <kbd>↑</kbd> = JUMP
+                            </div>
+                            <div class="key">
+                                <kbd>↓</kbd> = DUCK
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="right-panel">
+                <div class="game-container">
+                    <div class="game-header">
+                        <div class="score-board">
+                            <div class="score-item">
+                                <span class="score-label">SCORE</span>
+                                <span id="score" class="score-value">00000</span>
+                            </div>
+                            <div class="score-item">
+                                <span class="score-label">HIGH SCORE</span>
+                                <span id="highScore" class="score-value">00000</span>
+                            </div>
+                            <div class="score-item">
+                                <span class="score-label">SPEED</span>
+                                <span id="speed" class="score-value">x1.0</span>
+                            </div>
+                        </div>
+                        <div class="game-controls">
+                            <button id="startGame" class="btn btn-success" disabled>
+                                <i class="fas fa-gamepad"></i> Start Game
+                            </button>
+                            <button id="pauseGame" class="btn btn-warning" disabled>
+                                <i class="fas fa-pause"></i> Pause
+                            </button>
+                            <button id="resetGame" class="btn btn-danger">
+                                <i class="fas fa-redo"></i> Reset
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="game-canvas-container">
+                        <canvas id="gameCanvas" width="800" height="400"></canvas>
+                        <div class="game-message" id="gameMessage">
+                            <h2>Webcam Dino Game</h2>
+                            <p>Start camera and calibrate hand detection to begin playing</p>
+                            <button id="messageStart" class="btn btn-primary">
+                                <i class="fas fa-video"></i> Start Camera
+                            </button>
+                            <div class="loading-tensorflow" id="loadingTF">
+                                <i class="fas fa-spinner fa-spin"></i> Loading AI models...
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="game-stats">
+                        <div class="stat-item">
+                            <div class="stat-label">Obstacles Avoided</div>
+                            <div class="stat-value" id="obstaclesAvoided">0</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-label">Game Time</div>
+                            <div class="stat-value" id="gameTime">00:00</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-label">Detection Accuracy</div>
+                            <div class="stat-value" id="accuracy">0%</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <footer>
+            <p>Webcam Dino Game | Real Hand Detection with TensorFlow.js | Made with <i class="fas fa-heart"></i> by GameDev Enthusiast</p>
+            <div class="footer-links">
+                <a href="#" id="soundToggle"><i class="fas fa-volume-up"></i> Sound: ON</a>
+                <a href="#" id="debugToggle"><i class="fas fa-bug"></i> Debug Mode: OFF</a>
+                <a href="#" id="tfStatus"><i class="fas fa-brain"></i> AI: Loading...</a>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Add a loading indicator for TensorFlow.js -->
+    <div id="tfLoading" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); color: white; z-index: 1000; display: flex; flex-direction: column; justify-content: center; align-items: center;">
+        <div style="font-size: 24px; margin-bottom: 20px;">
+            <i class="fas fa-spinner fa-spin"></i> Loading AI Hand Detection...
+        </div>
+        <div style="max-width: 600px; text-align: center; padding: 20px;">
+            <p>First time setup: Downloading TensorFlow.js and hand detection models (this may take a moment).</p>
+            <p>Make sure you have a stable internet connection.</p>
+        </div>
+    </div>
+
+    <script src="camera.js"></script>
+    <script src="game.js"></script>
+    <script src="script.js"></script>
+    
+    <!-- Add fallback script if TensorFlow.js fails -->
+    <script>
+        // Show loading indicator
+        document.addEventListener('DOMContentLoaded', function() {
+            const loadingDiv = document.getElementById('tfLoading');
+            const tfStatus = document.getElementById('tfStatus');
+            
+            // Show loading for 3 seconds minimum
+            loadingDiv.style.display = 'flex';
+            
+            // Check if TensorFlow loaded
+            setTimeout(function() {
+                if (typeof tf !== 'undefined') {
+                    loadingDiv.innerHTML = '<div style="font-size: 24px; margin-bottom: 20px;"><i class="fas fa-check-circle" style="color: #4dff91;"></i> AI Models Loaded!</div>' +
+                                          '<div style="max-width: 600px; text-align: center; padding: 20px;">' +
+                                          '<p>Hand detection is ready. Click "Start Camera" to begin.</p>' +
+                                          '</div>';
+                    
+                    setTimeout(() => {
+                        loadingDiv.style.display = 'none';
+                    }, 2000);
+                    
+                    if (tfStatus) {
+                        tfStatus.innerHTML = '<i class="fas fa-brain"></i> AI: Ready';
+                        tfStatus.style.color = '#4dff91';
+                    }
+                } else {
+                    loadingDiv.innerHTML = '<div style="font-size: 24px; margin-bottom: 20px;"><i class="fas fa-exclamation-triangle" style="color: #fdcb6e;"></i> AI Models Failed to Load</div>' +
+                                          '<div style="max-width: 600px; text-align: center; padding: 20px;">' +
+                                          '<p>Using fallback detection. You can still play with keyboard controls.</p>' +
+                                          '<button onclick="document.getElementById(\'tfLoading\').style.display=\'none\'" style="margin-top: 20px; padding: 10px 20px; background: #4dff91; color: #1a1a2e; border: none; border-radius: 5px; font-weight: bold; cursor: pointer;">Continue Anyway</button>' +
+                                          '</div>';
+                    
+                    if (tfStatus) {
+                        tfStatus.innerHTML = '<i class="fas fa-brain"></i> AI: Failed';
+                        tfStatus.style.color = '#e17055';
+                    }
+                }
+            }, 3000);
+        });
+    </script>
+</body>
+</html>
