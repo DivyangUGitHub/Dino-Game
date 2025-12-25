@@ -200,21 +200,7 @@ python -m http.server 8000
 ## 🎯 **HOW TO PLAY**
 
 <div align="center">
-graph LR
-    A[📷 Camera Input] --> B{🤖 AI Processing};
-    B --> C[🎯 Hand Detection];
-    C --> D[⚡ 30ms Latency];
-    D --> E[🦖 Game Action];
-    E --> F[🎮 60 FPS Render];
-    F --> G[🏆 Score Update];
-    
-    style A fill:#1a1a2e,color:#fff
-    style B fill:#0f3460,color:#fff
-    style C fill:#16213e,color:#fff
-    style D fill:#4dff91,color:#000
-    style E fill:#2d4059,color:#fff
-    style F fill:#00b894,color:#fff
-    style G fill:#fdcb6e,color:#000
+
 
 | Step | Action | Visual |
 |------|--------|--------|
@@ -242,4 +228,5 @@ cd webcam-dino-game
 # Run instantly
 python -m http.server 8000
 # Open http://localhost:8000
+
 
